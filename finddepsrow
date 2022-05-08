@@ -1,0 +1,37 @@
+#!/bin/bash
+#
+# finddepsrow: list port's dependencies as a row
+#
+# Output dependencies found by finddeps as a single row, suitable for
+# the "Depends on:" line in a Pkgfile. Dependencies from core are omitted.
+# The wrapper also checks if any libs are missing by calling `revdep`.
+#
+# Petar Petrov, slackalaxy at gmail dot com
+
+# is input empty?
+if [ "$1" = "" ]; then
+    echo "Usage: finddepsrow <port>"
+    exit 1
+fi
+
+echo "** checking"
+
+found=$(finddeps ${1} | grep -v "core" | awk '{print $1}')
+revck=$(revdep ${1})
+
+if [ "$revck" = "$1" ]; then
+  echo "** $1 is missing libraries"
+  inst=" installed"
+  revdep -vvv $1
+fi
+
+if [ -z "$found" ]; then
+  echo "** no${inst} deps outside core"
+  exit 0
+fi
+
+echo "**${inst} deps outside core:"
+for f in ${found[@]}; do
+  echo -n "$f "
+done
+echo ""
