@@ -1,0 +1,62 @@
+#!/bin/bash
+#
+# revlibpkg: find ports that contain missing libs
+#
+# revlibpkg uses revdep to check for missing .so files, then searches
+# with prt-get to find which ports contain them. Redundant libraries are
+# removed, reporting a simple list.
+#
+# Petar Petrov, slackalaxy at gmail dot com
+
+prgname=revlibpkg # (how to name it??) libpkg, revlibpkg, findrev, findrevlib, findrev
+
+INPUT="$@"
+
+# is input empty?
+if [ "$1" = "" ]; then
+    echo "Input is empty. Usage: $prgname [package...]"
+    exit 1
+fi
+
+# no options used with revlibpkg
+for t in ${INPUT[@]}; do
+  if [[ $t == -* ]]; then
+    echo -e "Invalid input "$t". Usage: $prgname [package...]"
+    exit 1
+  fi
+done
+
+count_input(){
+  num=$(echo "$INPUT" | wc -w)
+  echo -e "** checking $num package(s)"
+}
+
+# check if input is installed
+is_input_inst(){
+  if prt-get isinst "$1" | grep -q "not installed" ; then
+    echo -e "$1: not installed"
+    installed="not"
+  else
+    installed="yes"
+  fi
+}
+
+count_input
+
+for i in ${INPUT[@]}; do
+
+  is_input_inst "$i"
+  
+  # get libs and remove duplicates
+  LIB=$(revdep "$i" -vvv | grep "missing library" | awk -F ":" '{print $3}' | sort -u)
+
+  if [ -z "$LIB" ] && [ "$installed" = "yes" ]; then
+    echo -e "$i: ok"
+  else
+    for l in ${LIB[@]} ; do
+      revport=$(prt-get fsearch ${l} | grep "Found in" | awk '{print $NF}' | sed 's|:|/|' | sed 's|/| |g' | awk '{print $NF}')
+      ports=$(for p in ${revport[@]}; do echo -e -n "$p " ; done)
+      echo -e "$i: missing <$l> found in: $ports"
+    done
+  fi
+done
