@@ -1,0 +1,36 @@
+#!/bin/bash
+#
+# missdeps: check for missing deps of installed packages
+#
+# missdeps uses revdep listinst to check for missing dependencies, then
+# outputs their immediate dependents
+#
+# Petar Petrov, slackalaxy at gmail dot com
+
+missing=$(prt-get listinst | xargs prt-get depends | grep "\[ \]" | sed "s:\[ \] ::g")
+
+if [ -z "$missing" ]; then
+    echo "** no missing deps"
+    exit 0
+else
+    echo "** checking for missing deps"
+    echo "-- ([ ] missing, [i] = installed dependents)"
+fi
+
+for m in ${missing[@]}; do
+  echo -e "[ ] $m"
+  dependents=$(prt-get dependent $m)
+  # it gets too cluttered to list them all
+  # dependents=$(prt-get dependent $m --all)
+  
+  # hmmm... is this actually necessary when --all is not used?
+  for d in ${dependents[@]}; do
+    if prt-get isinst "$d" | grep -q "not installed" ; then
+      box="[ ]"
+    else
+      box="[i]"
+    fi
+    echo -e "$box $d"
+  done
+
+done
