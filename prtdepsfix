@@ -1,4 +1,11 @@
 #!/bin/bash
+#
+# prtdepsfix: add any new deps to the existing deps of a port
+#
+# Calculate dependencies by calling finddeps, then add update the deps
+# information of the port (non-reduncant).
+#
+# Petar Petrov, slackalaxy at gmail dot com
 
 port="$1"
 portpath=$(prt-get info "$port" | grep Path | sed "s|Path:||" | sed "s| ||g")
