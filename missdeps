@@ -8,9 +8,8 @@
 # Petar Petrov, slackalaxy at gmail dot com
 
 missing=$(prt-get listinst | xargs prt-get depends | grep "\[ \]" | sed "s:\[ \] ::g")
-misspkg=$(prt-get listinst | xargs prt-get depends | grep "\-- missing packages")
 
-if [ -z "$missing" ] && [ -z "$misspkg" ]; then
+if [ -z "$missing" ]; then
     echo "** no missing deps"
     exit 0
 else
@@ -35,8 +34,3 @@ for m in ${missing[@]}; do
   done
 
 done
-
-# are there missing deps that have no ports?
-if [ ! -z "$misspkg" ]; then
-  prt-get listinst | xargs prt-get depends | grep -v "\["
-fi
