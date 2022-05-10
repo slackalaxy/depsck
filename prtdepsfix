@@ -7,6 +7,18 @@
 #
 # Petar Petrov, slackalaxy at gmail dot com
 
+# is input empty?
+if [ "$1" = "" ]; then
+    echo "Usage: prtdepsfix <port>"
+    exit 1
+fi
+
+# no options used with prtdepsfix
+if [[ $1 == -* ]]; then
+    echo -e "Invalid input "$1". Usage: prtdepsfix <port>"
+    exit 1
+fi
+
 port="$1"
 portpath=$(prt-get info "$port" | grep Path | sed "s|Path:||" | sed "s| ||g")
 echo "$portpath/$port"
