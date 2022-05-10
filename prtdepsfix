@@ -1,0 +1,11 @@
+#!/bin/bash
+
+port="$1"
+portpath=$(prt-get info "$port" | grep Path | sed "s|Path:||" | sed "s| ||g")
+echo "$portpath/$port"
+
+newdeps=$(echo -n `finddeps $port | grep -v "core" | awk '{print $1}'`)
+echo "** calculating new deps"
+
+sed -i "s|# Depends on:|# Depends on: $newdeps|" $portpath/$port/Pkgfile
+findredundantdeps -f $port
