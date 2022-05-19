@@ -18,23 +18,25 @@ else
     echo "-- ([ ] missing, [i] = installed dependents)"
 fi
 
+# Report missing rependencies...
 for m in ${missing[@]}; do
   echo -e "[ ] $m"
   dependents=$(prt-get dependent $m)
-  # it gets too cluttered to list them all
-  # dependents=$(prt-get dependent $m --all)
   
-  # hmmm... is this actually necessary when --all is not used?
+  # ... and find their immediate dependents
   for d in ${dependents[@]}; do
-    if prt-get isinst "$d" | grep -q "not installed" ; then
-      box="[ ]"
-    else
-      box="[i]"
-    fi
-    echo -e "$box $d"
+    deps+=$(echo "$d ")
   done
-
+  
 done
+
+# Remove repetitive dependents
+norep=$(echo -e "${deps[@]}" | sed "s: :\n:g" | sort -u)
+
+# Print the dependents
+for n in ${norep[@]}; do
+  echo -e "[i] $n"
+done 
 
 # are there missing deps that have no ports?
 if [ ! -z "$misspkg" ]; then
