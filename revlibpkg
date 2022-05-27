@@ -35,7 +35,7 @@ for i in "$@"; do
   if prt-get isinst "$i" >/dev/null; then
     
     # Search by awk for a pattern. Then translate new lines to space.
-    ILIB=$(revdep "$i" -vvv | awk -F ":" '/(missing library)/ {print $3}' | uniq | tr '\n' ' ')
+    ILIB=$(revdep "$i" -vvv | awk -F ":" '/(missing library)/ {print $3}' | sort -u | tr '\n' ' ')
     
     # Collect the missing libs, if any.
     if [ -z "$ILIB" ]; then
