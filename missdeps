@@ -19,6 +19,7 @@ else
 fi
 
 # Report missing rependencies...
+deps=""
 for m in ${missing[@]}; do
   echo -e "[ ] $m"
   dependents=$(prt-get dependent $m)
@@ -31,7 +32,7 @@ for m in ${missing[@]}; do
 done
 
 # Remove repetitive dependents
-norep=$(echo -e "${deps[@]}" | sed "s: :\n:g" | sort -u)
+norep=$(echo -e "${deps[@]}" | sed "s: :\n:g" | sort -u | tr '\n' ' ')
 
 # Print the dependents
 for n in ${norep[@]}; do
