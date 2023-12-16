@@ -1,5 +1,6 @@
 # depsck: dependencies check
-Some extra, unofficial, tools to check relations between dependencies.
+Some extra, unofficial, tools to check/update relations between
+dependencies of ports.
 
 ## finddepsrow
 List port's dependencies as a row.
