@@ -13,8 +13,12 @@ fi
 port="$1"
 
 # does port exist?
+if [ -f $port ]; then
+	echo "$port if a file."
+	exit 1
+fi
 if [ ! -d $port ]; then
-	echo "$port does note exist."
+	echo "$port does not exist."
 	exit 1
 fi
 
@@ -47,4 +51,4 @@ depc=$(echo "$depa $depb" | cut -c14- | sed "s: :\n:g" | sort -u | tr '\n' ' ')
 
 # write to Pkgfile
 sed -i "s/$depa/$(echo "# Depends on:" $depc)/" $port/Pkgfile
-echo "=======> Processed $port"
+echo "=======> prtdepadd $port"
