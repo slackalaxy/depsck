@@ -1,9 +1,27 @@
-# depsck
+# depsck: dependencies check
 Some extra, unofficial, tools to check relations between dependencies.
-`revlibpkg` checks if an installed package is missing libraries found in
-another package/port. `missdeps` scans the installed packages for any
-missing dependencies. `finddepsrow` shows the output dependencies of a
-package as a row, omitting those that belong to core.
+
+## finddepsrow
+List port's dependencies as a row.
+
+Output dependencies found by `finddeps` as a single row, suitable for
+the "# Depends on:" line in the Pkgfile. Dependencies from core are
+omitted. The wrapper also checks if any libs are missing by calling
+`revdep`.
+
+## missdeps
+Check for missing deps of all packages that are installed.
+
+This tool uses `revdep listinst` to check for missing dependencies of
+the packages that are installed, then reports them and outputs their
+immediate installed dependents.
+
+## prtdepadd
+Adds missing dependencies to a port.
+
+First, `prtdepadd` scans the Pkgfile for existing dependencies, then
+calls `finddeps` and merges both back in the Pkgfile. The port must
+be installed first.
 
 ## revlibpkg
 Find which ports contain missing libraries needed by a package.
@@ -31,18 +49,3 @@ bit.
 
 The ports database (and hence .footprints) should be updated for this to
 work properly.
-
-## missdeps
-Check for missing deps of all packages that are installed.
-
-This tool uses `revdep listinst` to check for missing dependencies of
-the packages that are installed, then reports them and outputs their
-immediate installed dependents.
-
-## finddepsrow
-List port's dependencies as a row.
-
-Output dependencies found by `finddeps` as a single row, suitable for
-the "# Depends on:" line in the Pkgfile. Dependencies from core are
-omitted. The wrapper also checks if any libs are missing by calling
-`revdep`.
